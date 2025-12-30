@@ -12,6 +12,14 @@ find_package(Qt6 REQUIRED COMPONENTS Quick)
 
 qt_add_executable(appWowDashboard
         main.cpp
+        backend/ApiClient.cpp
+        backend/ApiClient.h
+        backend/PlayersService.cpp
+        backend/PlayersService.h
+        backend/PlayerDetailsService.cpp
+        backend/PlayerDetailsService.h
+        backend/StatusService.cpp
+        backend/StatusService.h
 )
 
 qt_add_qml_module(appWowDashboard
@@ -20,11 +28,16 @@ qt_add_qml_module(appWowDashboard
         QML_FILES
         qml/Main.qml
         qml/Nav.qml
+
         qml/pages/Home.qml
         qml/pages/Download.qml
         qml/pages/Players.qml
         qml/pages/Status.qml
         qml/pages/PlayerDetails.qml
+
+        qml/components/RestartModal.qml
+        qml/components/StatusCard.qml
+        qml/components/StatusBadge.qml
 )
 
 target_link_libraries(appWowDashboard
