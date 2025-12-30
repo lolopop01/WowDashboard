@@ -15,9 +15,6 @@ Item {
         anchors.margins: 32
         spacing: 28
 
-        /* ======================
-           Header
-           ====================== */
         RowLayout {
             Layout.fillWidth: true
 
@@ -50,9 +47,6 @@ Item {
             }
         }
 
-        /* ======================
-           Restart error banner
-           ====================== */
         Rectangle {
             visible: restartError.length > 0
             Layout.fillWidth: true
@@ -70,18 +64,12 @@ Item {
             }
         }
 
-        /* ======================
-           Loading state
-           ====================== */
         Text {
             visible: statusService.loading
             text: "Checking services…"
             color: "#94a3b8"
         }
 
-        /* ======================
-           Status grid
-           ====================== */
         GridLayout {
             visible: !statusService.loading
             Layout.fillWidth: true
@@ -120,9 +108,6 @@ Item {
 
         Item { Layout.fillHeight: true }
 
-        /* ======================
-           Footer
-           ====================== */
         Text {
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
@@ -132,10 +117,8 @@ Item {
         }
     }
 
-    /* ======================
-       Restart modal
-       ====================== */
     RestartModal {
+        id: restartModal
         anchors.fill: parent
         visible: modalOpen
         loading: statusService.restarting
@@ -143,17 +126,26 @@ Item {
         onClose: modalOpen = false
 
         onConfirm: (password, auth, world) => {
-            const result = statusService.restart(password, auth, world)
-            modalOpen = false
+            statusService.restart(password, auth, world)
+        }
+    }
 
-            if (!result || !result.ok) {
-                restartError =
-                        result.error === "unauthorized"
-                    ? "Invalid admin password."
-                    : result.error === "rate_limited"
-                        ? "Restart already requested recently. Please wait."
-                        : "Restart failed due to a server error."
+
+    Connections {
+        target: statusService
+
+        function onRestartResult(ok, error) {
+            if (ok) {
+                restartError = ""
+                return
             }
+
+            restartError =
+                    error === "unauthorized"
+                ? "Invalid admin password."
+                : error === "rate_limited"
+                    ? "Restart already requested recently. Please wait."
+                    : "Restart failed due to a server error."
         }
     }
 }

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+
 Item {
     id: root
     anchors.fill: parent
@@ -10,11 +11,28 @@ Item {
     signal close()
     signal confirm(string password, bool auth, bool world)
 
+    onVisibleChanged: {
+        if (!visible) {
+            countdownTimer.stop()
+            reset()
+        }
+    }
+
+
     property bool auth: true
     property bool world: false
     property string password: ""
     property int countdown: -1
     property bool fired: false
+
+    function reset() {
+        password = ""
+        auth = true
+        world = false
+        countdown = -1
+        fired = false
+    }
+
 
     Rectangle {
         anchors.fill: parent

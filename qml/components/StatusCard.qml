@@ -11,8 +11,6 @@ Item {
     property bool hasSince: false
 
     Layout.fillWidth: true
-
-    // 🔑 FIX: force consistent card height
     Layout.preferredHeight: 150
 
     readonly property bool online:
@@ -31,9 +29,6 @@ Item {
             anchors.margins: 24
             spacing: 12
 
-            /* ======================
-               Header
-               ====================== */
             RowLayout {
                 Layout.fillWidth: true
 
@@ -43,7 +38,6 @@ Item {
                     font.weight: Font.DemiBold
                     color: "#f8fafc"
                     Layout.fillWidth: true
-                    elide: Text.ElideRight
                 }
 
                 Rectangle {
@@ -66,25 +60,17 @@ Item {
                 }
             }
 
-            /* ======================
-               Description
-               ====================== */
             Text {
                 text: description
                 font.pixelSize: 13
                 color: "#94a3b8"
-                elide: Text.ElideRight
             }
 
-            Item { Layout.fillHeight: true } // 🔑 spacer keeps footer aligned
+            Item { Layout.fillHeight: true }
 
-            /* ======================
-               Footer (RESERVED SPACE)
-               ====================== */
             Text {
                 text: hasSince && online ? ("UP SINCE  " + status.since) : ""
                 visible: hasSince && online
-                opacity: hasSince && online ? 1.0 : 0.0
                 font.family: "monospace"
                 font.pixelSize: 11
                 color: "#64748b"
@@ -93,7 +79,6 @@ Item {
             Text {
                 text: !online ? "Service currently unavailable" : ""
                 visible: !online
-                opacity: !online ? 1.0 : 0.0
                 font.pixelSize: 11
                 color: "#64748b"
             }

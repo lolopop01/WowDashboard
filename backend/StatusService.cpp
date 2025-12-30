@@ -95,13 +95,19 @@ QVariant StatusService::restart(
             ).toInt();
 
         if (status == 200) {
+            emit restartResult(true, "");
             QTimer::singleShot(5000, this, &StatusService::refresh);
+        } else if (status == 401) {
+            emit restartResult(false, "unauthorized");
+        } else if (status == 429) {
+            emit restartResult(false, "rate_limited");
+        } else {
+            emit restartResult(false, "server_error");
         }
 
         emit changed();
         reply->deleteLater();
     });
 
-    // optimistic response (React-style)
-    return QVariantMap{{"ok", true}};
+    return {};
 }
