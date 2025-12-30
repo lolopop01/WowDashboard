@@ -6,30 +6,22 @@ Item {
     id: root
     anchors.fill: parent
 
-    // API
     property bool loading: false
     signal close()
     signal confirm(string password, bool auth, bool world)
 
-    // state
     property bool auth: true
     property bool world: false
     property string password: ""
     property int countdown: -1
     property bool fired: false
 
-    /* ======================
-       Dark overlay (NO children)
-       ====================== */
     Rectangle {
         anchors.fill: parent
-        color: "#000000"
-        opacity: 0.6
+        color: "#020617"
+        opacity: 0.75
     }
 
-    /* ======================
-       Countdown engine
-       ====================== */
     Timer {
         id: countdownTimer
         interval: 1000
@@ -51,9 +43,7 @@ Item {
     }
 
     function startCountdown() {
-        if (!password || (!auth && !world))
-            return
-
+        if (!password || (!auth && !world)) return
         fired = false
         countdown = 5
         countdownTimer.start()
@@ -65,34 +55,30 @@ Item {
         countdownTimer.stop()
     }
 
-    /* ======================
-       Dialog
-       ====================== */
     Rectangle {
-        id: dialog
-        width: 400
-        implicitHeight: content.implicitHeight   // 🔑 REQUIRED
+        width: 420
+        implicitHeight: content.implicitHeight
         anchors.centerIn: parent
-        radius: 16
-        color: "#0f172a"
-        border.color: "#1e293b"
+        radius: 20
+        color: "#020617"
+        border.color: "#334155"
         border.width: 1
 
         ColumnLayout {
             id: content
             anchors.fill: parent
-            anchors.margins: 24
-            spacing: 16
+            anchors.margins: 28
+            spacing: 18
 
             Text {
                 text: "Restart Services"
-                font.pixelSize: 20
-                font.bold: true
+                font.pixelSize: 22
+                font.weight: Font.DemiBold
                 color: "#f87171"
             }
 
             ColumnLayout {
-                spacing: 8
+                spacing: 10
 
                 CheckBox {
                     text: "Auth server"
@@ -117,58 +103,44 @@ Item {
                 onTextChanged: password = text
             }
 
-            Item { Layout.fillHeight: true }
+            Rectangle {
+                height: 1
+                Layout.fillWidth: true
+                color: "#1e293b"
+            }
 
             RowLayout {
                 Layout.fillWidth: true
 
-                /* Countdown active */
                 Item {
                     visible: countdown >= 0
                     Layout.fillWidth: true
 
-                    RowLayout {
-                        anchors.fill: parent
-
-                        Text {
-                            text: "Restarting in " + countdown + " seconds"
-                            color: "#94a3b8"
-                        }
-
-                        Item { Layout.fillWidth: true }
-
-                        Button {
-                            text: "Cancel"
-                            enabled: !loading
-                            onClicked: cancelCountdown()
-                        }
+                    Text {
+                        text: "Restarting in " + countdown + " seconds"
+                        color: "#94a3b8"
                     }
                 }
 
-                /* Normal actions */
-                Item {
+                Button {
+                    visible: countdown >= 0
+                    text: "Cancel"
+                    onClicked: cancelCountdown()
+                }
+
+                Item { Layout.fillWidth: true }
+
+                Button {
                     visible: countdown < 0
-                    Layout.fillWidth: true
+                    text: "Close"
+                    onClicked: close()
+                }
 
-                    RowLayout {
-                        anchors.fill: parent
-
-                        Button {
-                            text: "Close"
-                            enabled: !loading
-                            onClicked: close()
-                        }
-
-                        Item { Layout.fillWidth: true }
-
-                        Button {
-                            text: "Restart"
-                            enabled: !loading
-                                && password.length > 0
-                                && (auth || world)
-                            onClicked: startCountdown()
-                        }
-                    }
+                Button {
+                    visible: countdown < 0
+                    text: "Restart"
+                    enabled: !loading && password.length > 0 && (auth || world)
+                    onClicked: startCountdown()
                 }
             }
         }

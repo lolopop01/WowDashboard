@@ -9,20 +9,32 @@ class ApiClient;
 class StatusService : public QObject {
     Q_OBJECT
 
+    // Raw status objects (for data)
     Q_PROPERTY(QJsonObject api READ api NOTIFY changed)
     Q_PROPERTY(QJsonObject authserver READ authserver NOTIFY changed)
     Q_PROPERTY(QJsonObject worldserver READ worldserver NOTIFY changed)
     Q_PROPERTY(QJsonObject database READ database NOTIFY changed)
+
+    // Explicit helpers (for QML logic)
+    Q_PROPERTY(bool authHasSince READ authHasSince NOTIFY changed)
+    Q_PROPERTY(bool worldHasSince READ worldHasSince NOTIFY changed)
+
+    // State
     Q_PROPERTY(bool loading READ loading NOTIFY changed)
     Q_PROPERTY(bool restarting READ restarting NOTIFY changed)
 
 public:
     explicit StatusService(ApiClient *api, QObject *parent = nullptr);
 
+    // Raw data
     QJsonObject api() const { return m_apiStatus; }
     QJsonObject authserver() const { return m_auth; }
     QJsonObject worldserver() const { return m_world; }
     QJsonObject database() const { return m_db; }
+
+    // Explicit helpers (NO undefined ever)
+    bool authHasSince() const;
+    bool worldHasSince() const;
 
     bool loading() const { return m_loading; }
     bool restarting() const { return m_restarting; }

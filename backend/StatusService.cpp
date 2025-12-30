@@ -11,6 +11,18 @@ StatusService::StatusService(ApiClient *api, QObject *parent)
     refresh();
 }
 
+bool StatusService::authHasSince() const {
+    return m_auth.contains("since")
+        && m_auth.value("since").isString()
+        && !m_auth.value("since").toString().isEmpty();
+}
+
+bool StatusService::worldHasSince() const {
+    return m_world.contains("since")
+        && m_world.value("since").isString()
+        && !m_world.value("since").toString().isEmpty();
+}
+
 void StatusService::refresh()
 {
     m_loading = true;
@@ -36,18 +48,21 @@ void StatusService::refresh()
 
         m_apiStatus = {{"active", true}};
 
+        const auto authObj = json["ac-authserver"].toObject();
         m_auth = {
-            {"active", json["ac-authserver"].toObject()["active"].toBool()},
-            {"since", json["ac-authserver"].toObject()["since"].toString()}
+            {"active", authObj["active"].toBool()},
+            {"since", authObj["since"].toString()}
         };
 
+        const auto worldObj = json["ac-worldserver"].toObject();
         m_world = {
-            {"active", json["ac-worldserver"].toObject()["active"].toBool()},
-            {"since", json["ac-worldserver"].toObject()["since"].toString()}
+            {"active", worldObj["active"].toBool()},
+            {"since", worldObj["since"].toString()}
         };
 
+        const auto dbObj = json["database"].toObject();
         m_db = {
-            {"active", json["database"].toObject()["active"].toBool()}
+            {"active", dbObj["active"].toBool()}
         };
 
         emit changed();
@@ -87,6 +102,6 @@ QVariant StatusService::restart(
         reply->deleteLater();
     });
 
-    // Immediate optimistic response (like React)
+    // optimistic response (React-style)
     return QVariantMap{{"ok", true}};
 }

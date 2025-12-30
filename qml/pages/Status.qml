@@ -10,14 +10,10 @@ Item {
     property bool modalOpen: false
     property string restartError: ""
 
-    /* ======================
-       Main page layout
-       ====================== */
     ColumnLayout {
-        id: layout
         anchors.fill: parent
-        anchors.margins: 24
-        spacing: 24
+        anchors.margins: 32
+        spacing: 28
 
         /* ======================
            Header
@@ -26,17 +22,18 @@ Item {
             Layout.fillWidth: true
 
             ColumnLayout {
-                spacing: 4
+                spacing: 6
 
                 Text {
                     text: "Server Status"
-                    font.pixelSize: 28
-                    font.bold: true
+                    font.pixelSize: 32
+                    font.weight: Font.DemiBold
                     color: "#facc15"
                 }
 
                 Text {
                     text: "Live status of all backend services"
+                    font.pixelSize: 14
                     color: "#94a3b8"
                 }
             }
@@ -59,22 +56,22 @@ Item {
         Rectangle {
             visible: restartError.length > 0
             Layout.fillWidth: true
-            radius: 8
-            color: "#7f1d1d"
-            opacity: 0.2
+            radius: 12
+            color: "#450a0a"
             border.color: "#ef4444"
+            opacity: 0.9
 
             Text {
                 anchors.fill: parent
-                anchors.margins: 12
+                anchors.margins: 14
                 text: restartError
-                color: "#f87171"
+                color: "#fca5a5"
                 wrapMode: Text.WordWrap
             }
         }
 
         /* ======================
-           Loading
+           Loading state
            ====================== */
         Text {
             visible: statusService.loading
@@ -88,32 +85,36 @@ Item {
         GridLayout {
             visible: !statusService.loading
             Layout.fillWidth: true
-            columns: width > 600 ? 2 : 1
-            columnSpacing: 16
-            rowSpacing: 16
+            columns: width > 720 ? 2 : 1
+            columnSpacing: 24
+            rowSpacing: 24
 
             StatusCard {
                 title: "API"
                 description: "Backend API"
                 status: statusService.api
+                hasSince: false
             }
 
             StatusCard {
                 title: "Auth Server"
                 description: "Authentication service"
                 status: statusService.authserver
+                hasSince: statusService.authHasSince
             }
 
             StatusCard {
                 title: "World Server"
                 description: "Game world service"
                 status: statusService.worldserver
+                hasSince: statusService.worldHasSince
             }
 
             StatusCard {
                 title: "Database"
                 description: "Game database"
                 status: statusService.database
+                hasSince: false
             }
         }
 
@@ -132,7 +133,7 @@ Item {
     }
 
     /* ======================
-       Restart modal (OUTSIDE layout)
+       Restart modal
        ====================== */
     RestartModal {
         anchors.fill: parent
@@ -150,7 +151,7 @@ Item {
                         result.error === "unauthorized"
                     ? "Invalid admin password."
                     : result.error === "rate_limited"
-                        ? "Restart already requested recently. Please wait before trying again."
+                        ? "Restart already requested recently. Please wait."
                         : "Restart failed due to a server error."
             }
         }

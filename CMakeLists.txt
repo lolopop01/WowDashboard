@@ -37,7 +37,6 @@ qt_add_qml_module(appWowDashboard
 
         qml/components/RestartModal.qml
         qml/components/StatusCard.qml
-        qml/components/StatusBadge.qml
 )
 
 target_link_libraries(appWowDashboard
